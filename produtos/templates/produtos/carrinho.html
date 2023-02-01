@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load myfilters %}
+
+{% block content%}
+
+{% if request.session.carrinho %}
+<div class="row mt-3">
+ 
+    <div class="col">
+        <h4>
+            <i class="fa fa-user" aria-hidden="true"></i> {{ request.session.cliente }}
+        </h4> 
+        <p class="lead">Os produtos, quantidades e preços que você escolheu.</p>            
+        <div class="table-responsive">
+            <table class="table">
+                <tr class="d-flex">                    
+                    <th class="col-6">Produto</th>
+                    <th class="col-2">QTD.</th>
+                    <th class="col-2">Pco </th>
+                    <th class="col-2">Total</th>
+                </tr>
+            
+                {% for item in carrinhoItens.values%}
+                
+                <tr class="d-flex">
+                    <td class="col-6">
+                        <a href="#" class="href">
+                            {{ item.nome }}
+                        </a>
+                        <a class="ml-3" href="{% url 'remove_item_carrinho' item.id %}">
+                            <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    <td class="col-2">
+                        <input type="number" readonly name="qtd" id="quantity" min="0" max="999" value="{{ item.qtd }}" style="min-width:20%;max-width:96%;"/>
+                    </td>
+                        {% widthratio item.preco_venda 1 item.qtd as subtotal %}
+                        <td class="col-2">{{ item.preco_venda|formata_preco }}</td>
+                        <td class="col-2">{{ subtotal|add:"0"|formata_preco }}</td>                     
+                </tr>
+                {% endfor %}        
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-lg">
+        <div class='table-responsive'>
+            <table class="table">
+                <tr>
+                    <td class="font-weight-bold">Total</td>
+                    <td>{{ carrinhoItens|cart_totals:request.session.delivery|formata_preco}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg mt-auto">
+        <a class="btn btn-lg btn-block btn-primary" href="{% url 'pedido_novo' %}">
+            Efetuar pedido
+        </a>      
+    </div>
+</div>
+{% else %}
+<div class="row mt-3">
+    <div class="col">
+        <h3>Pedido Vazio</h3>
+        <p class="lead">Não há produtos</p>
+    </div>
+</div>    
+{% endif %}
+
+{% endblock %}

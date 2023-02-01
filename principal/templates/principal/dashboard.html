@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load url_extra %}
+{% block titulo %}Quintal Chopp Delivery {% endblock %}
+
+{% block content %}
+{% comment %} <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="card text-dark" style="border: 0px">
+        <div class="card-header bg-secondary text-center text-light" style="border-radius: 10px 10px 0 0;">Entregas pendentes</div>
+          <div class="card-body" style="padding: 1px;">
+            {% if count_entregas > 1%} 
+            <!--Starting list group here -->
+                {%for pedido in entregas|slice:":5"%}
+                <div>
+                  <a href="{% url 'pedido_entregar' pk=pedido.pk%}" style="padding: 3px 5px 3px 5px;" class="list-group-item d-flex justify-content-between align-items-center list-group-item-action list-group-item-light %}">
+                    {{ pedido.data_pedido|date:"SHORT_DATE_FORMAT"}} {{ pedido.cliente__nome }} 
+                  </a>
+                </div>
+                {% endfor %}
+              <!--Ends here --> 
+              {% else %} 
+                Não existem pedidos com entrega pendente!
+              {% endif %}
+          </div>
+          <div class="card-footer bg-secondary text-right" style="border-radius: 0 0 10px 10px;">
+            {{ basedir }} 
+            {% if count_entregas > 1%}            
+              <span class="text-light"> Existem {{ count_entregas }} pedidos para entregar! </span>
+            {% endif %}
+            {% if count_entregas > 5 %}
+              <a href="{% url 'pedido_entregas_pendentes'%}"> 
+                <button class="btn btn-sm btn-info">ver mais ...</button>
+              </a>
+            {% else %}
+              <button class="btn btn-sm btn-info" disabled>ver mais ...</button>
+            {% endif %}
+          </div>
+        </div>
+        
+      </div>
+      <div class="col">
+        <div class="card text-dark" style="border: 0px">
+        <div class="card-header bg-secondary text-center text-light" style="border-radius: 10px 10px 0 0;">Pagamentos pendentes</div>
+          <div class="card-body" style="padding: 1px;">
+            {% if count_entregas > 1%} 
+            <!--Starting list group here -->
+                {%for pedido in pagtos|slice:":5"%}
+                <div class="list-group" >
+                  <a href="{% url 'pedido_pagar' pk=pedido.pk%}" style="padding: 3px 5px 3px 5px;" class="list-group-item d-flex justify-content-between align-items-center list-group-item-action list-group-item-light %}">
+                    {{ pedido.data_pedido|date:"SHORT_DATE_FORMAT"}} {{ pedido.cliente__nome }} 
+                  </a>
+                </div>
+                {% endfor %}
+              <!--Ends here --> 
+              {% else %} 
+                Não existem pedidos com pagamento pendente!
+              {% endif %}
+          </div>
+          <div class="card-footer bg-secondary text-right" style="border-radius: 0 0 10px 10px;">          
+              {% if count_entregas > 1%}            
+              <span class="text-light"> Existem {{ count_pagtos }} pedidos em débito!</span>
+              {% endif %}
+              {% if count_pagtos > 5 %}
+              <a href="#"> <button class="btn btn-sm btn-info">ver mais ...</button></a>
+              {% else %}
+              <button class="btn btn-sm btn-info" disabled>ver mais ...</button>
+              {% endif %}            
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    </div> {% endcomment %}
+    <h3 class="">dashboard {{ basedir}}</h3>
+    <h4>Pedidos</h4>
+    <h4>Vendas</h4>
+    <h4>relatorio de vendas</h4>
+    
+
+{% endblock %}

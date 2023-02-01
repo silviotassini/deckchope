@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load crispy_forms_tags %}
+{% block titulo %}Produtos{% endblock %}
+<script src="https://unpkg.com/htmx.org@1.8.4"></script>
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <center><h3>Produtos</h3> </center>
+                {% include 'snippets/show_messages.html' %}
+            </div>
+        </div>    
+        <div class="row">
+            <div class="col-6">                
+                {# Search form #}
+                <form hx-get="{% url 'produtos' %}" 
+                      hx-target="div.table-container" 
+                      hx-swap="outerHTML"                     
+                      class="form-inline">
+                    {% crispy filter.form %}
+                </form>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-primary shadow p-2 rounded" onclick="location.href='{% url 'produto_create' %}'">Cadastrar novo</button>
+            </div>
+        </div>
+    </div>
+        
+    {# The actual table #}
+    {% render_table table %}
+
+{% endblock %}

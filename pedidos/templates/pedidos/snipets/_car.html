@@ -1,0 +1,48 @@
+{% load static %}
+{% load myfilters %}
+
+<div class="table-responsive">
+    <table class="table">
+        <tr>
+            <th class="d-none d-lg-block">Imagem</th>
+            <th>Produto</th>
+            <th>V.</th>
+            <th>QTD.</th>
+            <th>Total</th>
+        </tr>
+    
+        {% for item in request.session.carrinho.values %}
+        
+        <tr>
+            <td class="d-none d-lg-block">
+                <!-- TODO: se não houver imagem colocar uma padrão
+                -->
+                <img class="cart-img" src="{% get_media_prefix %}{{ item.imagem }}">
+            </td>
+            <td>
+                <a href="{% url 'produto:detalhe' item.slug %}" class="href">
+                    {{ item.produto_nome }}
+                </a>
+                <a class="ml-3" href="{% url 'produto:rmcar' %}?vid={{ item.variacao_id}}">
+                    <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
+                </a>
+            </td>
+            <td>{{ item.variacao_nome }}</td>
+            <td>
+                {{ item.quantidade }}x
+                {% if item.pcounit_promo %}
+                    {{ item.pcounit_promo|formata_preco }}
+                {% else %}
+                    {{ item.pcounit|formata_preco }}
+                {% endif%}
+            </td>
+            {% if item.pcototal_promo %}
+            <td>{{ item.pcototal_promo|formata_preco }}</td>
+            {% else %}
+            <td>{{ item.pcototal|formata_preco }}</td>
+            {% endif%}
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>

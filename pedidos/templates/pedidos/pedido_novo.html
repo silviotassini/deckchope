@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block titulo %} Pedido {% endblock %}
+{% block content %}
+
+<form method="POST" action="">    
+     
+    {% csrf_token %} 
+    {{form.media}}
+    {% include 'snippets/show_messages.html' %}     
+    {{ form|crispy }}
+    <input type="button" value="Cancelar">
+    <input type="submit" value="Salvar">    
+</form>
+
+
+{% endblock %}

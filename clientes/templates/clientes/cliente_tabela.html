@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load myfilters %}
+{% load static %}
+{% load heroicons %}
+
+{% block content %}
+<div class="card w-full bg-base-100 shadow-xl card-bordered card-compact border border-gray-900">
+    <div class="card-body">
+        <h3 class="card-title">Cliente: {{ cliente }}</h3>
+    </div>
+</div>
+
+<form method="POST" action="">     
+    {% csrf_token %} 
+    {% include 'snippets/show_messages.html' %}     
+    {% crispy form %}  
+    <input type="reset" name="cancelar" value="Cancelar" class="btn btn-inverse"  id="reset-id-cancelar" onclick="history.go(-1);"/> 
+    <input type="submit" name="submit" value="Salvar" class="btn btn-primary" id="submit-id-submit" />         
+</form>
+<br>
+<table class="table table-hover table-sm w-75">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Produto</th>
+        <th scope="col">Preço</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in PrecoCliente %}
+            <tr onclick="document.location.href='{{item.id}}'" >
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{item.produto}}</td>
+                <td>{{item.preco|formata_preco}}</td>
+                <td>
+                    <a class="btn" href="{{item.id}}/delete">
+                        {% heroicon_outline "trash" stroke="red" size=20 %}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

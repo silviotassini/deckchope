@@ -1,0 +1,42 @@
+{% load url_extra %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">    
+<div class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="navbar-header">
+                        <button class="navbar-toggle" data-target="#mobile_menu" data-toggle="collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                        <a href="#" class="navbar-brand">DeckChope</a>
+                    </div>
+
+                    <div class="navbar-collapse collapse" id="mobile_menu">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="{% url 'home' %}">Dashboard</a></li>
+                            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Clientes</a></li>
+                                    <li><a href="#">Pediso</a></li>
+                                    <li><a href="{% url 'produtos' %}">Produtos</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Vendas</a></li>
+                            <li><a href="#">Caixa</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-log-in"></span> Login <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Login</a></li>
+                                    <li><a href="#">Sign Up</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h3>Confirma exclusão permanente do Produto:</h3><br>
+        </div>        
+    </div>
+    <div class="row">   
+        <div class="col-md-6 col-md-offset-3">           
+            <form method="POST">     
+                {% csrf_token %}                 
+                <br>Produto: {{produto.nome}}</br>
+                <br>Descrição: {{produto.descricao}}</br>                  
+                <br>                
+                <input type="reset" class="btn btn-secondary" value="Cancelar" onclick="location.href='{% url 'produtos' %}'">
+                <input type="submit" class="btn btn-danger" value="Apagar">
+            </form>   
+        </div> 
+    </div>
+</div>
+{% endblock %}

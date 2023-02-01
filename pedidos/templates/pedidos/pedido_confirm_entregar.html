@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block titulo %} Entregar Pedido {% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="bg-light p-1 border">
+        Confirma Entrega do Pedido:
+    </div>
+    <div class="p-1 border">
+        <div class="row pt-1">
+            <div class="col">                               
+                Pedido: {{pedido}}
+            </div>
+            <div class="col">                               
+                Cliente: {{pedido.cliente.nome}}
+            </div>            
+        </div>
+        <div class="row pt-1">
+            <div class="col">                               
+                Data do pedido: {{pedido.data_pedido}}
+            </div>
+        </div>  
+    </div>
+</div>
+<div class="card">
+    <div class="bg-light p-1 border">
+                <div class="row">
+                    <div class="col-6">Produto</div>
+                    <div class="col-3 text-center ">Quant.</div>
+                    <div class="col-3 text-center ">Valor</div>
+                </div>
+    </div>
+    <div class="p-1 border">
+        <div class="row pt-3">
+            <div class="col"> 
+                {% for item in itens %}
+                    <div class="row">
+                        <div class="col-6">{{item.produto}}</div>
+                        <div class="col-3 text-right">{{item.quantidade}}</div>
+                        <div class="col-3 text-right">{{item.preco}}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>    
+</div>          
+<div class="card">
+    <div class="p-1 border">        
+            <form method="POST" action="">     
+                {% csrf_token %}
+                {{ form.management }}     
+                {{ form|crispy }} 
+                <input type="reset" class="btn btn-secondary" value="Cancelar" onclick="location.href='{% url 'pedidos' %}'">
+                <input type="submit" class="btn btn-info" value="Confirmar">
+            </form>               
+    </div>       
+</div>
+
+{% endblock %}
