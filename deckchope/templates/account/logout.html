@@ -1,0 +1,26 @@
+{% load i18n %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="height:100vh">
+    <div class="col-4">
+      <div class="card">
+        <div>
+          <h2 class="fw-bold mb-2 text-center">{% trans "Sign Out" %}</h2>
+          <p class="text-white-50 mb-5 text-center">{% trans 'Are you sure you want to sign out?' %}</p>
+        </div>    
+        <div class="card-body">
+          <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <center><button type="reset" class="btn btn-info" onclick="history.back()">{% trans 'Cancel' %}</button>
+              <button type="submit" class="btn btn-primary">{% trans 'Sign Out' %}</button></center>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
