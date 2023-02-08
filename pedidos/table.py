@@ -35,6 +35,6 @@ class PedidoHTMxTable(tables.Table):
                 }
 
         row_attrs = {
-            "onClick": lambda record: "document.location.href='/pedidos/pedido/{0}';".format(record.id)
+            "onClick": lambda record: "document.location.href='/deck/pedidos/pedido/{0}';".format(record.id)
         }
         

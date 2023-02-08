@@ -16,16 +16,15 @@ class FormPedido(forms.ModelForm):
         self.form_tag = False
         self.fields['usuario'].widget = forms.HiddenInput()
 
-        #TODO: verificar pq data esta com format americano, qdo no linux
         self.fields['data_entrega'].widget = forms.DateInput(
-            format='%d-%m-%Y',
+            format='%Y-%m-%d',
             attrs={ "class":'form-control vDateField',
                     "type":'date', 
                     "style":'max-width: 15em'                 
                 }
             )
         self.fields['data_pgto'].widget = forms.DateInput(
-            format='%d-%m-%Y',
+            format='%Y-%m-%d',
             attrs={ "class":'form-control',
                     "type":'date', 
                     "style":'max-width: 15em'                 

@@ -36,6 +36,14 @@ class ClienteHTMxTableView(SingleTableMixin, FilterView):
             template_name = "clientes/cliente_table.html"
         return template_name
 
+    # substitui por um manager no models
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     id_filial = self.request.session.get('id_filial')
+    #     if id_filial in [1,2]:
+    #         queryset = queryset.filter(filial=id_filial)
+    #     return queryset
+
 
 class ClienteDetalhe(SuccessMessageMixin, UpdateView):
     model = Cliente
@@ -75,18 +83,27 @@ class ClienteDelete(SuccessMessageMixin, DeleteView):
 
 class ClienteLista(SingleTableMixin, FilterView):
     table_class = ClienteHTMxTable
-    queryset = Cliente.objects.all()
+    # queryset = Cliente.objects.all()
     filterset_class = ClienteFilter
     paginate_by = 10
-    template_name = "clientes/cliente_table.html"
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "clientes/cliente_table_lista_partial.html"
+        else:
+            template_name = "clientes/cliente_table_lista.html"
+        return template_name
+
+
+# TODO: em vez de criar dois html para cliente tble, ver como passar parametro no cliente filter
 
     def dispatch(self, request, *args, **kwargs):
         if not request.session.get("clienteid"):
             return super().dispatch(request, *args, **kwargs)
-        return redirect(reverse_lazy('produto_show'))
+        return redirect(reverse_lazy('venda'))
 
     def get_table_kwargs(self):
-        return {'exclude': ('Excluir', 'Tabela'), "row_attrs": {"onClick": lambda record: "document.location.href='/clientes/lista/{0}';".format(record.id)}}
+        return {'exclude': ('Excluir', 'Tabela'), "row_attrs": {"onClick": lambda record: "document.location.href='/deck/clientes/lista/{0}';".format(record.id)}}
 
 
 class ClienteSelect(View):
@@ -97,7 +114,7 @@ class ClienteSelect(View):
         request.session['cliente'] = cliente.nome
         request.session['delivery'] = cliente.delivery
         request.session.save()
-        return redirect(reverse_lazy('produto_show'))
+        return redirect(reverse_lazy('venda'))
 
 
 class ClienteBasePrecos(View):

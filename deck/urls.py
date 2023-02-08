@@ -9,5 +9,5 @@ urlpatterns = [
     path('produtos/', include('produtos.urls')),
     path('clientes/', include('clientes.urls')),
     path('pedidos/', include('pedidos.urls')),
-    path('accounts/', include('allauth.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("deck/accounts/", include("django.contrib.auth.urls")),
+]

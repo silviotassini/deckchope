@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load myfilters %}
+{% load heroicons %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row mt-3 ml-3">
+      <div class="col-md-6 border border-secondary d-flex align-items-center">
+        <span>{{ request.session.cliente }}</span>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-secondary" onclick="location.href='{% url 'cliente_select' %}'">Cliente</button>
+      </div>
+    </div>
+    <div class="row ml-3 mr-3 mt-1">
+      <div class="col-md-4 border border-secondary"><button type="button" class="btn btn-secondary" onclick="location.href='{% url 'produto_show' %}'">Adicionar item ...</button>
+      </div>
+    </div>       
+    <div class="row ml-3 mr-3 mt-1 bg-light">
+      <div class="col-md-4 border border-secondary">Produto</div>
+      <div class="col-md-1 border border-secondary">Qtde</div>
+      <div class="col-md-1 border border-secondary">Valor unit.</div>
+      <div class="col-md-2 border border-secondary"></div>
+    </div>    
+    {% if request.session.carrinho %}
+      {% for item in carrinhoItens.values %}
+        <div class="row ml-3 mr-3">
+          <div class="col-md-4 border border-secondary">{{ item.nome }}</div>
+          <div class="col-md-1 border border-secondary">{{ item.qtd }}</div>
+          <div class="col-md-1 border border-secondary">{{ item.preco_venda|formata_preco }}</div>
+          <div class="col-md-2 border border-secondary">
+            <a class="btn" style="color:red" href="{% url 'remove_item_carrinho' item.id %}">{% heroicon_outline 'trash' %}</a>
+          </div>
+        </div>
+      {% endfor %}   
+      <div class="row ml-3 mr-3 mt-1">
+        <div class="col-md-5 border border-secondary">Total pedido</div>
+        <div class="col-md-3 border border-secondary">{{ carrinhoItens|cart_totals|formata_preco }}</div>
+      </div>
+      <div class="row ml-3 mr-3 mt-1">
+        <div class="col-md-4 border border-secondary"><button type="button" class="btn btn-secondary" onclick="location.href='{% url 'pedido_novo' %}'">Fechar Pedido</button>
+        </div>
+      </div>   
+
+    {% else %}
+      <div class="row ml-3 mr-3 mt-1">
+        <div class="col-md-6 border border-secondary">Carrinho vazio</div>        
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

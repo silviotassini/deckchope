@@ -51,7 +51,7 @@
             <table class="table">
                 <tr>
                     <td class="font-weight-bold">Total</td>
-                    <td>{{ carrinhoItens|cart_totals:request.session.delivery|formata_preco}}</td>
+                    <td>{{ carrinhoItens|cart_totals|formata_preco}}</td>
                 </tr>
             </table>
         </div>

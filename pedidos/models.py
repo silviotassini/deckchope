@@ -11,13 +11,14 @@ CH_PGTO=(
         ('4', 'Dinheiro'),
         ('5', 'PIX'),            
     )
+#TODO: pensar em um jeito de dar opcoes de gravar numero de parcelas no cartao, 1a data pgto    
 CH_STATUS=(            
         ('1', 'Pendente'), #pendente entrega e pgto
         ('2', 'Entregue'), # pendente pgto
         ('3', 'Pago'), # pendente entrega
         #('4', 'Finalizado'), # Entregue e pago
     )
-
+#TODO: copiar manager do cliente filtrando pedido por filial do cliente
 class Pedido(models.Model):
     usuario = models.ForeignKey(User, blank=True, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)

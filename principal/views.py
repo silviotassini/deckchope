@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
-#from pedidos.views import pedidosPendentes
+# from pedidos.views import pedidosPendentes
 from django.conf import settings
+from clientes.models import Cliente
 
 
 class Home(TemplateView):
@@ -13,7 +14,7 @@ class Home(TemplateView):
         # context['count_entregas'] = len(context['entregas'])
         # context['pagtos'] = pedidosPendentes().getPagtos()
         # context['count_pagtos'] = len(context['pagtos'])
-        # context['filial'] = self.get_user_auths()
+        context['filial'] = self.get_user_auths()
         context['basedir'] = settings.BASE_DIR
         return context
 
@@ -32,6 +33,30 @@ class Home(TemplateView):
         self.request.session['filial'] = l_as_list[0]
         self.request.session.save()
         return l_as_list[0]
+
+
+# class createClientes(TemplateView):
+#     def dispatch(self, request, *args, **kwargs):
+#         lista = []
+#         for i in range(100):
+#             lista.append(Cliente(filial=(i % 2) + 1,
+#                                  nome="cliente " +
+#                                  str(i) + " undiade " + str((i % 2) + 1),
+#                                  razaosocial="razao social",
+#                                  tipo=(i % 2) * 1,
+#                                  cpfcnpj='',
+#                                  endereco="endereco",
+#                                  cidade='Belo Horizonte',
+#                                  uf="UF",
+#                                  email="email@gmail.com",
+#                                  phone1="31 999999991",
+#                                  phone2="31 999999992",
+#                                  obs="",
+#                                  delivery=(i % 2) * 1)
+#                          )
+#         Cliente.objects.bulk_create(lista)
+
+#         return super().dispatch(request, *args, **kwargs)
 
 
 # TODO: Fazer tela mostrando todos pedidos a ser entregues,

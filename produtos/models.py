@@ -17,8 +17,8 @@ PROD_UNIT = (
 )
 
 PROD_TIPO = (
-            (0, "Bens de consumo"),
-            (1, "Material"),
+            (0, "Venda"),
+            (1, "Empréstimo"),
 )
 
 

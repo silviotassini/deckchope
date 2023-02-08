@@ -11,8 +11,6 @@
     {% csrf_token %}
     {% include 'snippets/show_messages.html' %}
     {% crispy form %}
-    {% comment %} <input type="reset" name="cancelar" value="Cancelar" class="btn btn-inverse" id="reset-id-cancelar" onclick="history.go(-1);" />
-    <input type="submit" name="submit" value="Salvar" class="btn btn-primary" id="submit-id-submit" /> {% endcomment %}
   </form>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

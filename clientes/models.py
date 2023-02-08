@@ -1,7 +1,6 @@
 from django.db import models
 from produtos.models import Produto
 
-
 ID_UNIT = (
             (1, "Unidade 01"),
             (2, "Unidade 02"),
@@ -40,6 +39,12 @@ UF_CHOICES = (
     ('SP', 'São Paulo'),
     ('TO', 'Tocantins')
 )
+class ClienteManager(models.Manager):
+    def get_queryset(self, request=None):
+        qs = super().get_queryset()
+        if request and 'id_filial' in request.session:
+            qs = qs.filter(filial=request.session['id_filial'])
+        return qs
 
 class Cliente(models.Model):
     filial = models.SmallIntegerField(choices=ID_UNIT, blank=True)

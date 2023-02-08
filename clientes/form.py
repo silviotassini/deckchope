@@ -84,13 +84,13 @@ class FormClienteTabela(forms.ModelForm):
             Field('produto', style='max-width: 30em'),
             Field('preco', style='max-width: 30em'),
         )
-        # self.helper.add_input(
-        #     Reset('cancelar', 'Cancelar',
-        #           onclick='window.location.href="{}"'.format('/clientes'))
-        # )
-        # self.helper.add_input(
-        #     Submit('submit', 'Salvar')
-        # )
+        self.helper.add_input(
+            Reset('cancelar', 'Cancelar',
+                  onclick="history.go(-1);", css_class="btn btn-inverse")
+        )
+        self.helper.add_input(
+            Submit('submit', 'Salvar', css_class="btn btn-primary")
+        )
 
     class Meta:
         model = ClienteTabela

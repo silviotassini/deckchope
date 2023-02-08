@@ -16,12 +16,14 @@ def cart_total_qtd(carrinho):
 
 
 @register.filter
-def cart_totals(carrinho, tipo):
-    return utils.cart_totals(carrinho, tipo)
+def cart_totals(carrinho):
+    return utils.cart_totals(carrinho)
+
 
 @register.filter
 def keyvalue(dicionario, chave):
     return dicionario[chave]
+
 
 @register.filter
 def vercarrinho(carrinho):

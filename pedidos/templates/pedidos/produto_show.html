@@ -14,57 +14,34 @@
         border: 0;
     }
 </style>
-<div class="row">
+<div class="row ml-3"> 
     <div class="col">
-        <h5>
-            <i class="fa fa-user" aria-hidden="true"></i> {{ request.session.cliente }}
-        </h5>
-    </div>
- 
-    <div class="col-lg-12">
-        <div class="card-columns">
-
             {% for produto in produtos %}
-            <div class="card">
                 {% if produto.produto.imagem %}                
                     <img class="imagem" src="{{ produto.produto.imagem.url }}" alt="{{ produto.nome }}" >               
                 {% endif %}
-
-                <div class="card-body">
-                    <h5 class="card-title">{{ produto.produto }}</h5>
-                    <div class="container product-price-block text-center">
-                        {% if produto.produto.tipo == 0 %}
-                                <span class="product-price">
-                                    {{ produto.preco|formata_preco }}
-                                </span>                                                    
-                        {% else %}
-                            <span class="product-price">
-                                Empréstimo
-                            </span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-top-light-custom text-center">
                     <form action="" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="pid" value={{ produto.produto.id }}>
-                        <div class="form-outline">
+                        
+                            <h5>{{ produto.produto }}</h5>
+                            {% if produto.produto.tipo == 0 %}
+                                    {{ produto.preco|formata_preco }}                                                 
+                            {% else %}
+                                    Empréstimo
+                            {% endif %}
+                            <span class="ml-3">
                             {% if produto.produto.id in carrinho %}
                             <input type="number" name="qtd" id="quantity" min="0" max="999" value="{{ carrinho|keyvalue:produto.produto.id }}" style="min-width:10%;max-width:25%;"/>
                             {% else %}
                             <input type="number" name="qtd" id="quantity" min="0" max="999" value="0" style="min-width:10%;max-width:25%;"/>
                             {% endif %}
-                        </div>
-                        <button class="btn btn-primary btn-sm m-1 btn-block" type="submit">                        
-                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>                        
+                            </span>
+                        <button class="btn btn-primary m-1" type="submit"> 
                             Adicionar
                         </button>
-                    </form>
-                </div>
-            </div>
+                    </form>                    
             {% endfor %}
-
-        </div>
     </div>
 </div>
 
