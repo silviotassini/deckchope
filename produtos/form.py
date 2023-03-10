@@ -14,13 +14,13 @@ class FormProduto(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Row(              
-            Column(Field('nome'),css_class='col-md-6 col-sm-12 mb-0'),
-            Column(Field('descricao'),css_class='col-md-6 col-sm-12 mb-0'),
+            Row(
+                Column(Field('nome'), css_class='col-md-6 col-sm-12 mb-0'),
+                Column(Field('descricao'), css_class='col-md-6 col-sm-12 mb-0'),
             ),
-            Row(                
-                Column(Field('unidade'),css_class='col-md-6 mb-0'),
-                Column(Field('tipo'),css_class='col-md-6 mb-0'),
+            Row(
+                Column(Field('unidade'), css_class='col-md-6 mb-0'),
+                Column(Field('tipo'), css_class='col-md-6 mb-0'),
             ),
             Row(
                 Column(Field(PrependedText('preco_custo', 'R$'),
@@ -31,10 +31,10 @@ class FormProduto(forms.ModelForm):
                        css_class="mask_money"), css_class='form-group col-md-4 mb-0'),
                 css_class='form-row'
             ),
-            Row(                
-                Column(Field('imagem'),css_class='col-md-12 mb-0'),
-            ), 
-            # Row(                
+            Row(
+                Column(Field('imagem'), css_class='col-md-12 mb-0'),
+            ),
+            # Row(
             #     Column(Reset('cancelar', 'Cancelar',
             #        onclick='window.location.href="{}"'.format('/produtos')),css_class='col-md-6 mb-0'),
             #     Column(Submit('submit', 'Salvar'),css_class='col-md-6 mb-0'),
@@ -44,7 +44,7 @@ class FormProduto(forms.ModelForm):
 
         self.helper.add_input(
             Reset('cancelar', 'Cancelar',
-                  onclick='window.location.href="{}"'.format('/produtos'))
+                  onclick='window.location.href="{}"'.format('/deck/produtos'))
         )
         self.helper.add_input(
             Submit('submit', 'Salvar')

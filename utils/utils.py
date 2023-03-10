@@ -11,9 +11,6 @@ def cart_total_qtd(carrinho):
 
 def cart_totals(carrinho):
     soma = 0
-    print("="*15)
-    print(carrinho)
-
     for item in carrinho.values():
         soma += float(item['qtd']) * float(item["preco_venda"])
     return soma

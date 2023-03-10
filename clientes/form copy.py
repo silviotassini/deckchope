@@ -22,23 +22,32 @@ class FormCliente(forms.ModelForm):
             Field('filial', style='max-width: 30em'),
             'delivery',
             Row(Column(Field('nome', style='max-width: 30em'), css_class='form-group col-md-3 mb-0'),
-                Column(Field('tipo', style='max-width: 15em'),
+                # Column(Field('razaosocial', style='max-width: 30em'),css_class='form-group col-md-3 mb-0'),
+                css_class="justify-content-start"
+                ),
+            Row(Column(Field('tipo', style='max-width: 15em'), css_class='form-group col-md-3 mb-0'),
+                Column(Field('cpfcnpj', style='max-width: 20em', css_class='mask_cpfcnpj'),
                        css_class='form-group col-md-3 mb-0'),
-                Column(Field('cpfcnpj', style='max-width: 15em',
-                       css_class='mask_cpfcnpj')),
-                css_class="justify-content-start"),
-            Row(Column(Field('endereco', style='max-width: 30em'),
+                # Column(Field('rgie', style='max-width: 15em'), css_class='form-group col-md-3 mb-0'),
+                css_class="justify-content-start"
+                ),
+            Row(Column(Field('endereco', style='max-width: 30em'), css_class='form-group col-md-3 mb-0'),
+                Column(Field('bairro', style='max-width: 30em'),
+                       css_class='form-group col-md-3 mb-0'), css_class="justify-content-start"
+                ),
+            Row(Column(Field('complemento', style='max-width: 30em'),
                        css_class='form-group col-md-3 mb-0'),
                 Column(Field('numero', style='max-width: 8em'),
                        css_class='form-group col-md-3 mb-0'),
                 Column(Field('cep', style='max-width: 8em', css_class='mask_cep'),
                        css_class='form-group col-md-3 mb-0'), css_class="justify-content-start"
                 ),
-            Row(Column(Field('complemento', style='max-width: 30em'),
-                       css_class='form-group col-md-3 mb-0'),
+            Row(
+                # Column(Field('uf', style='max-width: 15em'), css_class='form-group col-md-3 mb-0'),
                 Column(Field('cidade', style='max-width: 30em'),
                        css_class='form-group col-md-3 mb-0'), css_class="justify-content-start"
-                ),
+            ),
+
             Field('email', style='max-width: 30em'),
             Row(Column(Field('phone1', style='max-width: 15em',
                              css_class='mask_telefone'), css_class='form-group col-md-3 mb-0'),
@@ -58,6 +67,15 @@ class FormCliente(forms.ModelForm):
 
     def clean(self):
         data = self.cleaned_data
+
+    #     nome = data.get("nome")
+    #     comentario = data.get("comentario")
+    #     email = data.get("email")
+    #     if len(nome) < 3:
+    #         self.add_error(
+    #             'nome',
+    #             'Tamanho do campo nome inconsistente'
+    #         )
 
     class Meta:
         model = Cliente

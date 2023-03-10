@@ -19,11 +19,9 @@ def cart_total_qtd(carrinho):
 def cart_totals(carrinho):
     return utils.cart_totals(carrinho)
 
-
 @register.filter
 def keyvalue(dicionario, chave):
     return dicionario[chave]
-
 
 @register.filter
 def vercarrinho(carrinho):

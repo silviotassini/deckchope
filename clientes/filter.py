@@ -35,9 +35,9 @@ class ClienteFilter(django_filters.FilterSet):
         if self.request.session.get('id_filial') in ['1', '2']:
             return Cliente.objects.filter(
                 Q(filial=self.request.session['id_filial']) | Q(
-                    nome__icontains=value) | Q(razaosocial__icontains=value)
+                    nome__icontains=value)
             )
         else:
             return Cliente.objects.filter(
-                Q(nome__icontains=value) | Q(razaosocial__icontains=value)
+                Q(nome__icontains=value)
             )

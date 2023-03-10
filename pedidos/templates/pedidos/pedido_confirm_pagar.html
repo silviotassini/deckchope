@@ -34,7 +34,7 @@
             <form method="POST" action="">     
                 {% csrf_token %}
                 {{ form.management }}     
-                {{ form|crispy }} 
+                {% crispy form %}
                 <input type="reset" class="btn btn-secondary" value="Cancelar" onclick="location.href='{% url 'pedidos' %}'">
                 <input type="submit" class="btn btn-info" value="Confirmar">
             </form>   

@@ -1,5 +1,4 @@
 # Create your views here.
-from django.shortcuts import redirect, render
 from django.contrib.messages.views import SuccessMessageMixin
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -17,7 +16,7 @@ class ProdutoHTMxTableView(SingleTableMixin, FilterView):
     table_class = ProdutoHTMxTable
     queryset = Produto.objects.all()
     filterset_class = ProdutoFilter
-    paginate_by = 5
+    paginate_by = 15
 
     def get_template_names(self):
         if self.request.htmx:
@@ -32,7 +31,7 @@ class ProdutoDetalhe(SuccessMessageMixin, UpdateView):
     model = Produto
     form_class = FormProduto
     context_object_name = 'produto'
-    success_url = "/produtos"
+    success_url = reverse_lazy('produtos')
     success_message = "Produto [%(nome)s] atualizado com sucesso!"
 
 

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load url_extra %}
+{% load heroicons %}
+{% block titulo %}
+  Quintal Chopp Delivery
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Emprestimos de chopeiras</h1>
+    <form method="POST" action="">
+      {% csrf_token %}
+      {% include 'snippets/show_messages.html' %}
+      {% crispy form %}
+    </form>
+
+    <br />
+    <table class="table table-hover table-sm w-75">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Chopeira</th>
+          <th scope="col">Data inicial</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in emprestimos %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ item.cliente__nome }}</td>
+            <td>{{ item.produto__nome }}</td>
+            <td>{{ item.datainicio|date:'D, j M Y, H:i' }}</td>
+            <td>
+              <a class="btn" style="color:blue" href="/refund/{{ item.id }}" title="Recolher">{% heroicon_outline 'arrow-left-on-rectangle' %}</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

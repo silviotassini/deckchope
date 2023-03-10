@@ -1,29 +1,34 @@
 # Create your views here.
-from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.messages.views import SuccessMessageMixin
-from django.views import View
-from django_tables2 import SingleTableMixin
-from django_filters.views import FilterView
-from django.views.generic import TemplateView, ListView
-from django.views.generic.edit import UpdateView, CreateView, DeleteView
-from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from datetime import date
 
-from produtos.models import Produto
-from .models import Pedido, ItemPedido
+from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import ListView, TemplateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
+from extra_views import (CreateWithInlinesView, InlineFormSetFactory,
+                         UpdateWithInlinesView)
+
 from clientes.models import Cliente, ClienteTabela
-from .form import FormPedido, FormItemPedido, FormPedidoEntregar, FormPedidoPagar
-from pedidos.table import PedidoHTMxTable
 from pedidos.filter import PedidoFilter
-from extra_views import CreateWithInlinesView, UpdateWithInlinesView, InlineFormSetFactory
+from pedidos.table import PedidoHTMxTable
+from produtos.models import Produto
 from utils import utils
+
+from .form import (FormItemPedido, FormPedido, FormPedidoEntregar,
+                   FormPedidoPagar)
+from .models import ItemPedido, Pedido
 
 
 class PedidoHTMxTableView(SingleTableMixin, FilterView):
     table_class = PedidoHTMxTable
     queryset = Pedido.objects.all()
     filterset_class = PedidoFilter
-    paginate_by = 5
+    paginate_by = 15
 
     def get_template_names(self):
         if self.request.htmx:
@@ -36,8 +41,8 @@ class PedidoHTMxTableView(SingleTableMixin, FilterView):
 class pedidosPendentes(TemplateView):
 
     def getEntregas(self):
-        entregar = Pedido.objects.select_related().filter(status=1).values(
-            'pk', 'cliente', 'data_pedido', 'cliente__nome')
+        entregar = Pedido.objects.select_related().filter(status=1).order_by('data_entrega').values(
+            'pk', 'cliente', 'data_pedido', 'data_entrega', 'cliente__nome')
         return entregar
 
     def getPagtos(self):
@@ -78,19 +83,22 @@ class ItemPedidoInline(InlineFormSetFactory):
 
 class PedidoCreate(SuccessMessageMixin, CreateWithInlinesView):
     model = Pedido
-    inlines = [ItemPedidoInline,]
+    inlines = [ItemPedidoInline, ]
     form_class = FormPedido
     success_url = '/pedidos'
     success_message = "Pedido criado com sucesso!"
 
     def get_initial(self):
         return {
-            "usuario": "1"  # self.request.user,
+            "usuario": self.request.user,
         }
 
 
 class BaseCarrinho(View):
+    produtosCliente = {}
+
     def RemoveProdutoCarrinho(self, carrinho):
+        print(carrinho)
         tmp = {k: v for k, v in carrinho.items() if int(carrinho[k]) != 0}
         self.request.session['carrinho'] = tmp
         self.request.session.save()
@@ -105,18 +113,17 @@ class BaseCarrinho(View):
         carrinhoItens = {}
         carrinhoItens2 = {}
         for k, v in tmp.items():
-            produto = self.get_object().filter(produto_id=k)
-            print(produto[0].produto.nome)
+
             carrinhoItens[k] = {
                 "id": k,
-                "nome": produto[0].produto.nome,
-                "preco_venda": produto[0].preco,
-                "tipo": produto[0].produto.tipo,
+                "nome": self.produtosCliente[k]["produto"],
+                "preco_venda": self.produtosCliente[k]["valor"],
+                "tipo": "1",  # produto[0].produto.tipo,
                 "qtd": v
             }
             carrinhoItens2[k] = {
                 "qtd": str(v),
-                "preco": str(produto[0].preco)
+                "preco": str(self.produtosCliente[k]["valor"])
             }
         return [carrinhoItens, carrinhoItens2]
 
@@ -126,15 +133,38 @@ class PedidoVendas(TemplateView, BaseCarrinho):
 
     def get(self, *args, **kwargs):
         context = {}
+        # pega produtos do cliente com respectivos precos
+        produto = self.get_object()
+        self.produtosCliente = {}
+        for item in produto:
+            self.produtosCliente.update(
+                {item.produto.pk: {'produto': item.produto.nome, 'valor': item.preco}})
+        context["produtosCliente"] = self.produtosCliente
+
         if self.request.session.get('carrinho'):
             [carrinhoItens, carrinhoItens2] = self.ProcessaCarrinho(
                 self.request.session.get('carrinho')
             )
-            context = {"carrinhoItens": carrinhoItens}
+            context["carrinhoItens"] = carrinhoItens
             self.request.session['carrinhoItens'] = carrinhoItens2
             self.request.session.save()
 
         return render(self.request, self.template_name, context=context)
+
+    def post(self, request, *args, **kwargs):
+        if not self.request.session.get('carrinho'):
+            self.request.session['carrinho'] = {}
+            self.request.session.save()
+        pid = self.request.POST.get("produto")
+        carrinho = self.request.session['carrinho']
+        carrinho[pid] = self.request.POST.get("qtd")
+
+        if int(self.request.POST.get("qtd")) == 0:
+            del carrinho[pid]
+        self.request.session['carrinho'] = carrinho
+        self.request.session.save()
+        # self.RemoveProdutoCarrinho(carrinho)
+        return redirect(self.request.META.get('HTTP_REFERER'))
 
 
 class DeleteProdutoCarrinho(BaseCarrinho):
@@ -150,7 +180,7 @@ class DeleteProdutoCarrinho(BaseCarrinho):
 
 class PedidoDetalhe(SuccessMessageMixin, UpdateWithInlinesView):
     model = Pedido
-    inlines = [ItemPedidoInline,]
+    inlines = [ItemPedidoInline, ]
     form_class = FormPedido
     context_object_name = 'Pedido'
     success_url = reverse_lazy('pedidos')
@@ -183,6 +213,11 @@ class PedidoEntregar(SuccessMessageMixin, UpdateView):
         itens = ItemPedido.objects.filter(pedido_id=self.kwargs['pk'])
         context["itens"] = itens
         return render(request, self.template_name, context)
+
+    def get_initial(self):
+        return {
+            "data_entrega": date.today().strftime("%Y-%m-%d"),
+        }
 
 
 class PedidoPagar(SuccessMessageMixin, UpdateView):

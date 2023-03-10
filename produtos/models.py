@@ -1,9 +1,13 @@
-from django.db import models
-from PIL import Image
-from django.utils.text import slugify
-from django.conf import settings
-from django.utils import timezone
 import os
+import random
+import string
+
+from django.conf import settings
+from django.db import models
+from django.utils import timezone
+from django.utils.text import slugify
+from PIL import Image
+
 
 ID_UNIT = (
     (1, "Unidade 01"),
@@ -64,8 +68,10 @@ class Produto(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = f'{slugify(self.nome)}-{self.pk}'
-            self.slug = slug
+            slug = slugify(self.nome)
+            random_string = ''.join(random.choices(
+                string.ascii_lowercase + string.digits, k=3))
+            self.slug = f'{slug}-{random_string}'
 
         super().save(*args, **kwargs)
 
@@ -79,6 +85,26 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+class ProdutoEmprestimo(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    cliente = models.ForeignKey('clientes.Cliente', on_delete=models.CASCADE)
+    datainicio = models.DateTimeField(default=timezone.now)
+    datafim = models.DateTimeField(blank=True, null=True)
+
+    @staticmethod
+    def devolver(id_emprestimo):
+        emprestimo = ProdutoEmprestimo.objects.get(id=id_emprestimo)
+
+        emprestimo.datafim = timezone.now()
+        emprestimo.save()
+
+    class Meta:
+        verbose_name = "Emprestimos"
+
+    def __str__(self):
+        return self.cliente.nome + "  " + str(self.datainicio)
 
 
 class ProdutoEstoque(models.Model):

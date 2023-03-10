@@ -6,7 +6,6 @@ from django_filters.views import FilterView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic import View
 from django.urls import reverse_lazy
-from django.http import HttpResponse
 from .models import Cliente, ClienteTabela
 from .form import FormCliente, FormClienteTabela, TabelaCliente
 from clientes.table import ClienteHTMxTable
@@ -21,7 +20,7 @@ from clientes.filter import ClienteFilter
 class ClienteHTMxTableView(SingleTableMixin, FilterView):
     table_class = ClienteHTMxTable
     filterset_class = ClienteFilter
-    paginate_by = 5
+    paginate_by = 15
 
     def get_table_kwargs(self, Excluir=True):
         if Excluir == True:
@@ -36,28 +35,23 @@ class ClienteHTMxTableView(SingleTableMixin, FilterView):
             template_name = "clientes/cliente_table.html"
         return template_name
 
-    # substitui por um manager no models
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     id_filial = self.request.session.get('id_filial')
-    #     if id_filial in [1,2]:
-    #         queryset = queryset.filter(filial=id_filial)
-    #     return queryset
+    def get_context_data(self, **kwargs):
+        context = super(ClienteHTMxTableView, self).get_context_data(**kwargs)
+        context["txtHeader"] = "Clientes"
+        return context
 
 
 class ClienteDetalhe(SuccessMessageMixin, UpdateView):
     model = Cliente
     form_class = FormCliente
     context_object_name = 'cliente'
-    success_url = "/clientes"
+    success_url = reverse_lazy('clientes')
     success_message = "Cliente [%(nome)s] atualizado com sucesso!"
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        # TODO: voltar o request quando colocar login
-        self.object.filial = self.request.session.get("id_filial")
-        self.object.save()
-        return super(ClienteCreate, self).form_valid(form)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user_unit'] = self.request.session.get("id_filial")
+        return kwargs
 
 
 class ClienteCreate(SuccessMessageMixin, CreateView):
@@ -67,12 +61,15 @@ class ClienteCreate(SuccessMessageMixin, CreateView):
     success_url = reverse_lazy('clientes')
     success_message = "Cliente [%(nome)s] foi criado com sucesso!"
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        # TODO: voltar o request quando colocar login
-        self.object.filial = self.request.session.get("id_filial")
-        self.object.save()
-        return super(ClienteCreate, self).form_valid(form)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user_unit'] = self.request.session.get("id_filial")
+        return kwargs
+
+    def get_initial(self):
+        return {
+            "filial": self.request.session.get("id_filial"),
+        }
 
 
 class ClienteDelete(SuccessMessageMixin, DeleteView):
@@ -83,9 +80,8 @@ class ClienteDelete(SuccessMessageMixin, DeleteView):
 
 class ClienteLista(SingleTableMixin, FilterView):
     table_class = ClienteHTMxTable
-    # queryset = Cliente.objects.all()
     filterset_class = ClienteFilter
-    paginate_by = 10
+    paginate_by = 15
 
     def get_template_names(self):
         if self.request.htmx:
@@ -94,13 +90,14 @@ class ClienteLista(SingleTableMixin, FilterView):
             template_name = "clientes/cliente_table_lista.html"
         return template_name
 
-
-# TODO: em vez de criar dois html para cliente tble, ver como passar parametro no cliente filter
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.session.get("clienteid"):
-            return super().dispatch(request, *args, **kwargs)
-        return redirect(reverse_lazy('venda'))
+    def get_context_data(self, **kwargs):
+        context = super(ClienteLista, self).get_context_data(**kwargs)
+        context["txtHeader"] = "Selecione Cliente para o pedido"
+        return context
+    # def dispatch(self, request, *args, **kwargs):
+    #     if not request.session.get("clienteid"):
+    #         return super().dispatch(request, *args, **kwargs)
+    #     return redirect(reverse_lazy('venda'))
 
     def get_table_kwargs(self):
         return {'exclude': ('Excluir', 'Tabela'), "row_attrs": {"onClick": lambda record: "document.location.href='/deck/clientes/lista/{0}';".format(record.id)}}
@@ -109,10 +106,12 @@ class ClienteLista(SingleTableMixin, FilterView):
 class ClienteSelect(View):
 
     def get(self, request, *args, **kwargs):
-        cliente = Cliente.objects.get(id=kwargs.get('pk'))
+        #cliente = Cliente.objects.get(id=kwargs.get('pk'))
+        cliente = Cliente.objects.select_related().get(id=kwargs.get('pk'))
         request.session['clienteid'] = cliente.id
         request.session['cliente'] = cliente.nome
         request.session['delivery'] = cliente.delivery
+        produtosCliente = cliente.clientetabela_set.all()
         request.session.save()
         return redirect(reverse_lazy('venda'))
 
@@ -142,8 +141,6 @@ class ClientePrecos(SuccessMessageMixin, CreateView, ClienteBasePrecos):
     cliente = None
 
     def get_success_url(self):
-        # if you are passing 'pk' from 'urls' to 'DeleteView' for company
-        # capture that 'pk' as companyid and pass it to 'reverse_lazy()' function
         clienteid = self.kwargs['pk']
         return reverse_lazy('cliente_precos', kwargs={'pk': clienteid})
 
@@ -156,9 +153,8 @@ class ClientePrecos(SuccessMessageMixin, CreateView, ClienteBasePrecos):
         return context
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         form.instance.cliente_id = self.kwargs['pk']
+        from django.db import connection
         return super().form_valid(form)
 
 
@@ -182,14 +178,10 @@ class ClienteUpdatePrecos(SuccessMessageMixin, UpdateView, ClienteBasePrecos):
         return context
 
     def get_success_url(self):
-        # if you are passing 'pk' from 'urls' to 'DeleteView' for company
-        # capture that 'pk' as companyid and pass it to 'reverse_lazy()' function
         clienteid = self.kwargs['pk']
         return reverse_lazy('cliente_precos', kwargs={'pk': clienteid})
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         form.instance.cliente_id = self.kwargs['pk']
         return super().form_valid(form)
 
@@ -204,7 +196,5 @@ class ClientePrecosDelete(SuccessMessageMixin, DeleteView):
         return obj
 
     def get_success_url(self):
-        # if you are passing 'pk' from 'urls' to 'DeleteView' for company
-        # capture that 'pk' as companyid and pass it to 'reverse_lazy()' function
         clienteid = self.kwargs['pk']
         return reverse_lazy('cliente_precos', kwargs={'pk': clienteid})

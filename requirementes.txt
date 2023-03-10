@@ -1,5 +1,4 @@
 asgiref==3.6.0
-autopep8==2.0.1
 bcc==0.18.0
 beautifulsoup4==4.11.1
 blinker==1.4

@@ -51,20 +51,26 @@
         <li class="nav-item active">
           <a class="nav-link" href="{% url 'home' %}">Dashboard<span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'venda' %}">Venda</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled">Disabled</a>
-        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Admin</a>
           <div class="dropdown-menu">
             <a class="dropdown-item" href="{% url 'clientes' %}">Cliente</a>
             <a class="dropdown-item" href="{% url 'pedidos' %}">Pedido</a>
             <a class="dropdown-item" href="{% url 'produtos' %}">Produto</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'emprestimo' %}">Empréstimo</a>
           </div>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Relatórios</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">Vendas</a>
+            <a class="dropdown-item" href="#">Estatísticas</a>
+          </div>
+        </li>        
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'cliente_select' %}">Venda</a>
+        </li>        
       </ul>
       <ul class="nav navbar-nav navbar-right mr-10">  
         {% if request.session.carrinho %}
